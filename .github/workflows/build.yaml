@@ -1,0 +1,18 @@
+name: 'Build and package'
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  run_pyinstaller:
+    runs-on: ubuntu-latest
+    steps:
+      - name: PyInstaller Action
+        uses: Martin005/pyinstaller-action@v1.2.0
+        with:
+          spec: 'main.py'
+          requirements: 'requirements.txt'
+          options: '--onedir'
+          python_ver: '3.10'
+          upload_exe_with_name: 'QuickPrompt'

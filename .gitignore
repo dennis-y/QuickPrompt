@@ -2,3 +2,6 @@
 !.gitignore
 !*.py
 !*.txt
+!*.yaml
+!.github/
+!.github/workflows/
