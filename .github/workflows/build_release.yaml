@@ -1,0 +1,21 @@
+name: Build Release Version
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  run-pyinstaller:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - name: PyInstaller Action
+        uses: Martin005/pyinstaller-action@v1.2.0
+        with:
+          spec: 'main.py'
+          requirements: 'requirements.txt'
+          options: '--onedir'
+          python_ver: '3.10'
+          upload_exe_with_name: 'QuickPrompt'

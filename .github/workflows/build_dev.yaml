@@ -1,11 +1,11 @@
-name: 'Build and package'
+name: Build Dev Version
 on:
   push:
     branches:
       - main
 
 jobs:
-  run_pyinstaller:
+  run-pyinstaller:
     runs-on: ubuntu-latest
     steps:
       - name: PyInstaller Action
