@@ -19,7 +19,7 @@ Translate the following passage to english:
 '''
 
 [[prompts]]
-name = "Translate to English"
+name = "Fact Check"
 template = '''
 Point out any factual errors in the following passage, if you can find any.
 Passage:

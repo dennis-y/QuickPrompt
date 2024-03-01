@@ -1,6 +1,7 @@
 from PyQt5.QtCore import QSettings
 import tomlkit
 from fuzzywuzzy import process
+import os
 
 
 class QSettingsWrapper:
@@ -9,11 +10,13 @@ class QSettingsWrapper:
         self.num_recent_prompts = self.qsettings.value("numRecentPrompts", 6)
         print(f'num most recent: {self.num_recent_prompts}')
         self.prompts = {}
-        with open('prompts.toml', 'r') as f:
+        self.ordered_prompt_names = []
+        path = os.path.join(os.path.dirname(__file__), 'prompts.toml')
+        with open(path, 'r') as f:
             for prompt in tomlkit.parse(f.read())['prompts']:
                 print(prompt)
                 self.prompts[prompt['name']] = prompt
-        self.sorted_prompt_names = sorted(list(self.prompts.keys()))
+                self.ordered_prompt_names.append(prompt['name'])
         existing = self.qsettings.value("mruCommands", [])
         print(f'existing mru = {existing}')
     
@@ -51,7 +54,7 @@ class QSettingsWrapper:
         if len(mruCommands) >= num:
             return mruCommands[:num]
         
-        for name in self.sorted_prompt_names:
+        for name in self.ordered_prompt_names:
             if name in mruCommands:
                 continue
             mruCommands.append(name)
@@ -62,7 +65,7 @@ class QSettingsWrapper:
         return mruCommands
         
     def getMatchingPromptNames(self, text):
-        return process.extract(text, self.sorted_prompt_names, limit=self.num_recent_prompts)
+        return process.extract(text, self.ordered_prompt_names, limit=self.num_recent_prompts)
 
 
 settings = QSettingsWrapper()
