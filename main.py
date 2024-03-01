@@ -155,7 +155,7 @@ class StackedTextEdits(QWidget):
             self.close()
 
 
-if __name__ == '__main__':
+def main():
     import time
     start_time = time.time()
     app = QApplication(sys.argv)
@@ -167,3 +167,6 @@ if __name__ == '__main__':
     print(f"Startup Time: {end_time - start_time} seconds")
     code = app.exec_()
     sys.exit(code)
+
+if __name__ == '__main__':
+    main()

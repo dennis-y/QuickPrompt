@@ -8,7 +8,7 @@ def get_api_key(service):
         return settings['api_keys'][service]
 
 def call_model(message):
-    # TODO: Config for model
+    # TODO: Config for model in ui
     client = MistralClient()
     for result in client.ask(message):
         yield result
@@ -17,7 +17,7 @@ class BaseChatClient:
     def __init__(self, endpoint, model, api_key):
         self.api_key = api_key
         self.model = model
-        self.endpoint = endpoint # 'https://api.mistral.ai/v1/chat/completions'
+        self.endpoint = endpoint
         self.messages = []
 
     def ask(self, question, role="user"):
