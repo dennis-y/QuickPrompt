@@ -16,6 +16,6 @@ jobs:
         with:
           spec: 'main.py'
           requirements: 'requirements.txt'
-          options: '--onedir'
+          options: '--onedir --windowed'
           python_ver: '3.10'
           upload_exe_with_name: 'QuickPrompt'
