@@ -8,57 +8,7 @@ from PyQt5.QtCore import QObject, QTimer, QThread, pyqtSignal, QEvent, Qt, QSett
 from datetime import datetime
 
 import palette
-
-
-def get_api_key(service):
-    with open('.quickprompt.json') as f:
-        settings = json.load(f)
-        return settings['api_keys'][service]
-
-OPENAI_CLIENT = None
-
-
-def call_openai(message):
-    global OPENAI_CLIENT
-    if OPENAI_CLIENT is None:
-        # lazy load for faster startup time
-        from openai import OpenAI
-        OPENAI_CLIENT = OpenAI(api_key=get_api_key('openai'))
-
-    response = OPENAI_CLIENT.chat.completions.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": message},
-            
-        ], 
-        stream=True
-    )
-    for chunk in response:
-        content = chunk.choices[0].delta.content
-        if content is not None:
-            yield content
-
-MISTRAL_CLIENT = None
-def call_mistral(message):
-    global MISTRAL_CLIENT
-    if MISTRAL_CLIENT is None:
-        from mistralai.client import MistralClient
-        from mistralai.models.chat_completion import ChatMessage
-        client = MistralClient(api_key=get_api_key('mistral'))
-        for chunk in client.chat_stream(
-            model='mistral-medium-latest',
-            messages=[ChatMessage(role="user", content=message)],
-        ):
-            if chunk.choices[0].delta.content is not None:
-                yield chunk.choices[0].delta.content
-
-
-def call_model(message):
-    for result in call_mistral(message):
-        # the yield here is dumb, doesn't do anything.
-        # I call this in a separate thread anyway. 
-        yield result
+import unified_chat_client
 
 
 class Worker(QThread):
@@ -71,7 +21,7 @@ class Worker(QThread):
 
     def run(self):
         self.data_received.emit(self.acc)
-        for chunk in call_model(self.query):
+        for chunk in unified_chat_client.call_model(self.query):
             self.acc += chunk
             self.data_received.emit(self.acc)
 

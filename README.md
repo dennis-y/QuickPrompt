@@ -20,3 +20,7 @@ not so quick
 - [ ] try installing on mac
 - [ ] common wrapper around openai, mistral, etc
 - [ ] UI for settings. just api key for now.
+- [ ] reduce file size from 500MB
+  - [ ] mistralai requires pyarrow which is 150+MB. replace with HTTP calls
+  - [ ] 
+
