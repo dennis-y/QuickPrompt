@@ -37,7 +37,7 @@ jobs:
           pyinstaller \
             --clean \
             --distpath ./dist \
-            --windowed --onedir
+            --windowed --onedir main.py
           
           echo "✔️ Executable created successfully" >> $GITHUB_STEP_SUMMARY
 
