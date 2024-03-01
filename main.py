@@ -3,12 +3,13 @@ import os
 import json
 from PyQt5.QtGui import QKeyEvent, QTextCursor
 from PyQt5.QtWidgets import QApplication, QWidget, QTextEdit, QVBoxLayout, QPushButton, QDesktopWidget
-from PyQt5.QtCore import QObject, QTimer, QThread, pyqtSignal, QEvent, Qt, QSettings
+from PyQt5.QtCore import QObject, QTimer, QThread, pyqtSignal, QEvent, Qt
 
 from datetime import datetime
 
 import palette
 import unified_chat_client
+from settings import settings
 
 
 class Worker(QThread):
@@ -70,9 +71,6 @@ class StackedTextEdits(QWidget):
         self.initUI()
 
     def initUI(self):
-
-        self.settings = QSettings("MyCompany", "MyApp")
-
         layout = QVBoxLayout()
 
         self.modelResponseArea = QTextEdit(self)
@@ -107,9 +105,7 @@ class StackedTextEdits(QWidget):
         self.setWindowTitle('QuickPrompt')
         self.setWindowFlags(self.windowFlags() | Qt.WindowStaysOnTopHint)
 
-        mruCommands = self.settings.value("mruCommands", [])
-        if mruCommands:
-            self.commandSelected(mruCommands[0])
+        self.commandSelected(settings.getMostRecentPromptName())
 
         self.userArea.setFocus()
         self.show()
@@ -130,10 +126,11 @@ class StackedTextEdits(QWidget):
     def openPalette(self):
         self.palette = palette.CommandPalette(self)
         self.palette.commandSelected.connect(self.commandSelected)
+        self.palette.commandSelected.connect(settings.selectPrompt)
         self.palette.exec_()
     
     def commandSelected(self, command):
-        template = palette.TEMPLATES[command]
+        template = settings.getTemplateForPromptNamed(command)
         text = template.format_map({
             'clipboard':  QApplication.clipboard().text(),
             'date': datetime.now().strftime("%B %d, %Y"),

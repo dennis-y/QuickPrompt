@@ -1,21 +1,8 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QDialog, QMainWindow, QWidget, QVBoxLayout, QLineEdit, QListWidget, QListWidgetItem, QTextEdit
-from PyQt5.QtCore import QSettings, Qt, pyqtSignal
+from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QKeyEvent
-from fuzzywuzzy import process
-
-
-TEMPLATES = {
-    'define': '''Please explain any challenging or unusual terms in the following passage. 
-YOU MUST respond using the same language as the one that the passage is written in.
-Passage:
-{clipboard}
-''',
-    'translate': '''Translate the following passage to english:
-{clipboard}''',
-    'fun fact': '''Today is {date}. 
-What is something fun and lighthearted that happened on this day in the past?''',
-}
+from settings import settings
 
 
 class CommandLineEdit(QLineEdit):
@@ -39,11 +26,8 @@ class CommandPalette(QDialog):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle('Command Palette')
+        self.setWindowTitle('Prompt Palette')
         self.setGeometry(100, 100, 600, 400)
-        
-        self.settings = QSettings("MyCompany", "MyApp")
-        self.settings.clear()
         
         layout = QVBoxLayout()
         self.setLayout(layout)
@@ -65,8 +49,6 @@ class CommandPalette(QDialog):
         self.preview.setMinimumHeight(400)
         layout.addWidget(self.preview)
         
-        self.commands = list(TEMPLATES.keys())
-
         # TODO: Rename MRU -> frequent
         # Populate the list with MRU commands or default commands
         self.populateMRUorDefaultResults()
@@ -82,8 +64,7 @@ class CommandPalette(QDialog):
     def updateResults(self, text):
         self.resultsList.clear()
         if text:
-            matches = process.extract(text, self.commands, limit=5)
-            for match in matches:
+            for match in settings.getMatchingPromptNames(text):
                 item = QListWidgetItem(match[0])
                 self.resultsList.addItem(item)
             if not self.resultsList.count() == 0:
@@ -93,27 +74,14 @@ class CommandPalette(QDialog):
             self.populateMRUorDefaultResults()
     
     def populateMRUorDefaultResults(self):
-        mruCommands = self.settings.value("mruCommands", [])
-        showlist = []
-        if mruCommands:
-            for command in mruCommands:
-                showlist.append(command)
-
-        for command in self.commands:
-            if len(showlist) >= 6:
-                break
-            if command in showlist:
-                continue
-            showlist.append(command)
-
-        for item in showlist:
-            self.resultsList.addItem(QListWidgetItem(item))
+        for name in settings.getMostRecentPromptNames():
+            self.resultsList.addItem(QListWidgetItem(name))
         self.setRowSelected(0)
 
     def setRowSelected(self, row_num):
         self.resultsList.setCurrentRow(row_num)
         key = self.resultsList.currentItem().text()
-        self.preview.setPlainText(TEMPLATES[key])
+        self.preview.setPlainText(settings.getTemplateForPromptNamed(key))
     
     def itemSelected(self, item):
         self.processCommand(item.text())
@@ -124,14 +92,6 @@ class CommandPalette(QDialog):
             self.processCommand(currentItem.text())
     
     def processCommand(self, commandText):
-        # Update MRU commands list
-        mruCommands = self.settings.value("mruCommands", [])
-        if commandText in mruCommands:
-            mruCommands.remove(commandText)
-        mruCommands.insert(0, commandText)
-        # Keep only the latest 5 MRU commands
-        self.settings.setValue("mruCommands", mruCommands[:5])
-        
         print(f"Selected command: {commandText}")
         self.commandSelected.emit(commandText)
         self.close()

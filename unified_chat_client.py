@@ -9,7 +9,7 @@ def get_api_key(service):
 
 def call_model(message):
     # TODO: Config for model in ui
-    client = MistralClient()
+    client = OpenAIClient()
     for result in client.ask(message):
         yield result
 
@@ -43,10 +43,13 @@ class BaseChatClient:
         for event in client.events():
             if event.data == '[DONE]':
                 break
-            data = json.loads(event.data)
-            chunk = data['choices'][0]['delta']['content']
-            yield chunk
-    
+            try:
+                data = json.loads(event.data)
+                chunk = data['choices'][0]['delta']['content']
+                yield chunk
+            except:
+                print(f'Failed to decode: {event.data}')
+        
     def print(self, question):
         for chunk in self.ask(question):
             print(chunk, end='')

@@ -10,6 +10,7 @@ quick
 - [ ] env variable to clear settings OR default get blank for missing
 
 not so quick
+- [ ] gracefully handle renamed/deleted commands
 - [ ] Readme demo video
 - [ ] Add more prompts
 - [ ] Make the UI prettier

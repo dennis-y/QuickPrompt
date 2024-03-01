@@ -3,5 +3,6 @@
 !*.py
 !*.txt
 !*.yaml
+!*.toml
 !.github/
 !.github/workflows/

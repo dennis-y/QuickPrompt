@@ -1,0 +1,27 @@
+[[prompts]]
+name = "Blank"
+template = ""
+
+[[prompts]]
+name = "Universal Dictionary"
+template = '''
+Please explain any challenging or unusual terms in the following passage. 
+YOU MUST respond using the same language as the one that the passage is written in.
+Passage:
+{clipboard}
+'''
+
+[[prompts]]
+name = "Translate to English"
+template = '''
+Translate the following passage to english:
+{clipboard}
+'''
+
+[[prompts]]
+name = "Translate to English"
+template = '''
+Point out any factual errors in the following passage, if you can find any.
+Passage:
+{clipboard}   
+'''
