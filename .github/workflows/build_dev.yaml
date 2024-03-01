@@ -8,58 +8,11 @@ jobs:
   run-pyinstaller:
     runs-on: ubuntu-latest
     steps:
-      - name: (Install) python
-        uses: actions/setup-python@v4
+      - name: PyInstaller Action
+        uses: Martin005/pyinstaller-action@v1.2.0
         with:
-          python-version: '3.10'
-          architecture: x64
-      
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Create virtual environment
-        run: python -m venv .venv
-
-      - name: Install dependencies
-        run: |
-          source .venv/bin/activate
-          pip install -r requirements.txt
-          
-      - name: Install pyinstaller
-        run: |
-          source .venv/bin/activate
-          pip install pyinstaller
-
-      - name: (Create) Executable
-        shell: bash
-        run: |
-          source .venv/bin/activate
-          pyinstaller \
-            --clean \
-            --distpath ./dist \
-            --windowed --onedir main.py
-          
-          echo "✔️ Executable created successfully" >> $GITHUB_STEP_SUMMARY
-
-      - name: (Upload) Executable
-        id: artifact_upload
-        uses: actions/upload-artifact@v3
-        with:
-          name: QuickPrompt
-          path: ./dist
-
-      - name: If executable upload success
-        id: exe_uploading
-        if: steps.artifact_upload.conclusion == 'success'
-        shell: bash
-        run: |
-          echo "✔️ Executable uploaded successfully" >> $GITHUB_STEP_SUMMARY
-          echo "uploaded='true'" >> $GITHUB_OUTPUT
-      
-      - name: If executable upload fails
-        if: failure() && steps.artifact_upload.conclusion == 'failure'
-        shell: bash
-        run: |
-          echo "::warning title=Failed-Upload::\
-            Executable couldn't upload. \
-            Check available storage at: 'settings > billing > Storage for Actions and Packages'."
+          spec: 'main.py'
+          requirements: 'requirements.txt'
+          options: '--onedir --windowed'
+          python_ver: '3.10'
+          upload_exe_with_name: 'QuickPrompt'
