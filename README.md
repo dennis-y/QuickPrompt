@@ -5,12 +5,13 @@ quick
 - [ ] Readme description of project
 - [ ] Use flex layout instead of hardcoding pixels
 - [ ] Move templates to external file. Is there a standard prompt format?
-- [ ] send message history. (But don't show in the UI)
+- [x] send message history. (But don't show in the UI)
 - [ ] set company + app name
-- [ ] env variable to clear settings OR default get blank for missing
+- [x] env variable to clear settings OR default get blank for missing
 
 not so quick
-- [ ] gracefully handle renamed/deleted commands
+- [x] gracefully handle renamed/deleted commands
+- [ ] better error handling when network is down
 - [ ] Readme demo video
 - [ ] Add more prompts
 - [ ] Make the UI prettier

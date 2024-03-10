@@ -6,8 +6,20 @@ template = ""
 name = "Universal Dictionary"
 template = '''
 Please explain any challenging or unusual terms in the following passage. 
-YOU MUST respond using the same language as the one that the passage is written in.
+YOU MUST respond using the same language as the one that the foreign passage is written in.
 Passage:
+{clipboard}
+'''
+
+[[prompts]]
+name = "Gloss"
+template = '''
+Provide a glossing for the following passage into English.
+Do this phrase by phrase, by first reproducing the phrase in the original language,
+then adding the english literal translation in parenthesis, then the next phrase
+in the original language, et cetera.
+
+The passage:
 {clipboard}
 '''
 
@@ -24,4 +36,28 @@ template = '''
 Point out any factual errors in the following passage, if you can find any.
 Passage:
 {clipboard}   
+'''
+
+[[prompts]]
+name = "Summarize"
+template = '''
+You are an expert at making text more concise without changing its meaning. Don't reword, don't improve. 
+Just find ways to combine and shorten the text. Use lists when appropriate. 
+
+Here is the text to be summarized:
+{clipboard}
+'''
+
+[[prompts]]
+name = "Five Forces"
+template = '''
+Using Porter's Five forces frameworkr, analyze the following company: '''
+
+
+[[prompts]]
+name = "Book Summary"
+template='''
+Ignore all prior instructions. Act as an expert on summarization, outlining and structuring. Your style of writing should be informative and logical. Provide me with a summary of a book. The summary should include as much content as possible while keeping it lucid and easy to understand.
+
+If the book has multiple parts with multiple chapters, format the bigger sections as a big heading, then the chapters in sub-headings, and then the bullet points of the chapters in normal font. The structure should be the name of a chapter of the book, then Bulletpoints of the contents of said chapter. The bulletpoints must be included, as they provide the most information. Generate the output in markdown format. After completing the summary, add a list of 5 books you'd recommend someone interested in the book you have summarized. Do not remind me what I asked you for. Do not apologize. Do not self-reference. If you understand these Instructions, Answer by asking what book you should summarize.
 '''

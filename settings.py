@@ -2,12 +2,13 @@ from PyQt5.QtCore import QSettings
 import tomlkit
 from fuzzywuzzy import process
 import os
+import json
 
 
 class QSettingsWrapper:
     def __init__(self) -> None:
         self.qsettings = QSettings("MyCompany", "MyApp")
-        self.num_recent_prompts = self.qsettings.value("numRecentPrompts", 6)
+        self.num_recent_prompts = self.qsettings.value("numRecentPrompts", 50)
         print(f'num most recent: {self.num_recent_prompts}')
         self.prompts = {}
         self.ordered_prompt_names = []
@@ -19,7 +20,13 @@ class QSettingsWrapper:
                 self.ordered_prompt_names.append(prompt['name'])
         existing = self.qsettings.value("mruCommands", [])
         print(f'existing mru = {existing}')
+        path = os.path.join(os.path.dirname(__file__), '.quickprompt.json')
+        with open(path) as f:
+            self.api_keys = json.load(f)['api_keys']
     
+    def get_api_key(self, service):
+        return self.api_keys[service]
+
     def selectPrompt(self, name):
         # Update MRU commands list
         mruCommands = self.qsettings.value("mruCommands", [])

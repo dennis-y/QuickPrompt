@@ -1,16 +1,18 @@
 import requests
 import json
 import sseclient
+from settings import settings
 
-def get_api_key(service):
-    with open('.quickprompt.json') as f:
-        settings = json.load(f)
-        return settings['api_keys'][service]
+
+OPENAI_CLIENT = None
+MISTRAL_CLIENT = None
 
 def call_model(message):
+    global OPENAI_CLIENT
     # TODO: Config for model in ui
-    client = OpenAIClient()
-    for result in client.ask(message):
+    if OPENAI_CLIENT is None:
+        OPENAI_CLIENT = OpenAIClient()
+    for result in OPENAI_CLIENT.ask(message):
         yield result
 
 class BaseChatClient:
@@ -26,12 +28,14 @@ class BaseChatClient:
             "content": question,
         }
         # TODO: Keep track of all messages? Could be a lot of tokens
+        # TODO: What happens when we hit the token limit?
         self.messages.append(message)
         headers = {
             'Authorization': f'Bearer {self.api_key}', 
             'Accept': 'text/event-stream',
             'Content-Type': 'application/json',
         }
+        print(f'Sending messages: {self.messages}')
         response = requests.post(self.endpoint,json={
                 'model': self.model,
                 'stream': True,
@@ -40,15 +44,21 @@ class BaseChatClient:
             headers=headers, stream=True)
 
         client = sseclient.SSEClient(response)
+        model_message = []
         for event in client.events():
             if event.data == '[DONE]':
                 break
             try:
                 data = json.loads(event.data)
                 chunk = data['choices'][0]['delta']['content']
+                model_message.append(chunk)
                 yield chunk
             except:
                 print(f'Failed to decode: {event.data}')
+        self.messages.append({
+            "role": "assistant", 
+            "content": ''.join(model_message),
+        })
         
     def print(self, question):
         for chunk in self.ask(question):
@@ -57,11 +67,11 @@ class BaseChatClient:
 
 class MistralClient(BaseChatClient):
     def __init__(self, model='mistral-tiny'):
-        key = get_api_key('mistral')
+        key = settings.get_api_key('mistral')
         super().__init__('https://api.mistral.ai/v1/chat/completions', model, key)
 
 
 class OpenAIClient(BaseChatClient):
     def __init__(self, model='gpt-3.5-turbo'):
-        key = get_api_key('openai')
+        key = settings.get_api_key('openai')
         super().__init__('https://api.openai.com/v1/chat/completions', model, key)

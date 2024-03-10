@@ -18,7 +18,8 @@ class Worker(QThread):
     def __init__(self, query):
         super().__init__()
         self.query = query
-        self.acc = f'```\n{self.query}\n```\n---\n'
+        # self.acc = f'```\n{self.query}\n```\n---\n'
+        self.acc = ''
 
     def run(self):
         self.data_received.emit(self.acc)
@@ -88,9 +89,9 @@ class StackedTextEdits(QWidget):
         self.installEventFilter(self.openPaletteFilter)
         self.openPaletteFilter.openPalette.connect(self.openPalette)
 
-        layout.addWidget(self.userArea)
         layout.addWidget(self.modelResponseArea)
-
+        layout.addWidget(self.userArea)
+        
         self.setLayout(layout)
 
         screen_geometry = QDesktopWidget().screenGeometry()
@@ -113,8 +114,11 @@ class StackedTextEdits(QWidget):
     def append_text_to_model_response(self, text):
         # TODO: syntax highlighting for code
         self.modelResponseArea.setMarkdown(text)
-        self.modelResponseArea.verticalScrollBar().setValue(
-            self.modelResponseArea.verticalScrollBar().maximum())
+
+        # scroll to latest. can be annoying because you can't
+        # move the scrollbar manually
+        # self.modelResponseArea.verticalScrollBar().setValue(
+        #     self.modelResponseArea.verticalScrollBar().maximum())
 
     def run_query(self):
         query = self.userArea.toPlainText()
