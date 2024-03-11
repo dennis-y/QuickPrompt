@@ -2,7 +2,9 @@ import requests
 import json
 import sseclient
 from settings import settings
+import logging
 
+logger = logging.getLogger(__name__)
 
 OPENAI_CLIENT = None
 MISTRAL_CLIENT = None
@@ -35,7 +37,7 @@ class BaseChatClient:
             'Accept': 'text/event-stream',
             'Content-Type': 'application/json',
         }
-        print(f'Sending messages: {self.messages}')
+        logger.info(f'Sending messages: {self.messages}')
         response = requests.post(self.endpoint,json={
                 'model': self.model,
                 'stream': True,
@@ -54,7 +56,7 @@ class BaseChatClient:
                 model_message.append(chunk)
                 yield chunk
             except:
-                print(f'Failed to decode: {event.data}')
+                logger.warn(f'Failed to decode: {event.data}')
         self.messages.append({
             "role": "assistant", 
             "content": ''.join(model_message),

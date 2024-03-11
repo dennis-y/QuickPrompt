@@ -4,6 +4,9 @@ from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import QKeyEvent
 from settings import settings
 
+import logging
+logger = logging.getLogger(__name__)
+
 
 class CommandLineEdit(QLineEdit):
     enterPressed = pyqtSignal()
@@ -92,7 +95,7 @@ class CommandPalette(QDialog):
             self.processCommand(currentItem.text())
     
     def processCommand(self, commandText):
-        print(f"Selected command: {commandText}")
+        logger.info(f"Selected command: {commandText}")
         self.commandSelected.emit(commandText)
         self.close()
 

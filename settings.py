@@ -137,15 +137,12 @@ class QSettingsWrapper:
     def selectPrompt(self, name):
         # Update MRU commands list
         mruCommands = self.qsettings.value("mruCommands", [])
-        print(f'existing = {mruCommands}')
         if name in mruCommands:
             mruCommands.remove(name)
         mruCommands.insert(0, name)
         truncated = mruCommands[:self.num_recent_prompts]
         self.qsettings.setValue("mruCommands", truncated)
-        print('did update mru commands')
-        print(f'new commands = {truncated}')
-        
+
     def getTemplateForPromptNamed(self, name):
         if name not in self.prompts:
             return ''
@@ -153,7 +150,6 @@ class QSettingsWrapper:
 
     def getMostRecentPromptName(self):
         result = self.getMostRecentPromptNames(1)[0]
-        print(f'most recent prompt {result}')
         return result
 
     def getMostRecentPromptNames(self, num=None):
@@ -175,7 +171,7 @@ class QSettingsWrapper:
             if len(mruCommands) >= num:
                 break
         
-        print(f'recent commands: {mruCommands}')
+        logger.info(f'recent commands: {mruCommands}')
         return mruCommands
         
     def getMatchingPromptNames(self, text):

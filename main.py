@@ -1,22 +1,23 @@
 from PyQt5.QtCore import QStandardPaths
 import logging
 import os
+import sys
+
 
 def get_log_file_path():
-    log_directory = QStandardPaths.writableLocation(QStandardPaths.AppLocalDataLocation)
+    log_directory = QStandardPaths.writableLocation(QStandardPaths.AppDataLocation)
     if not os.path.exists(log_directory):
         os.makedirs(log_directory)
     return os.path.join(log_directory, "quickprompt.log")
 
-# logging.basicConfig(filename=get_log_file_path(), level=logging.DEBUG,
-#                     format='%(asctime)s - %(levelname)s - %(name)s - %(message)s')
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s - %(levelname)s - %(name)s - %(message)s')
+log_file_path = get_log_file_path()
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s - %(levelname)s - %(name)s - %(message)s',
+                    handlers=[logging.FileHandler(log_file_path), logging.StreamHandler(sys.stderr)])
+logger = logging.getLogger(__name__)
+logger.info(f'Logging to {log_file_path}')
 
 
-import sys
-
-import json
 from PyQt5.QtGui import QKeyEvent, QTextCursor
 from PyQt5.QtWidgets import QApplication, QWidget, QTextEdit, QVBoxLayout, QPushButton, QDesktopWidget
 from PyQt5.QtCore import QObject, QTimer, QThread, pyqtSignal, QEvent, Qt
@@ -28,8 +29,6 @@ import unified_chat_client
 from settings import settings
 
 
-logger = logging.getLogger(__name__)
-logger.info('hello world')
 
 
 class Worker(QThread):
@@ -185,7 +184,7 @@ def main():
     app.setFont(font)
     ex = StackedTextEdits()
     end_time = time.time()
-    print(f"Startup Time: {end_time - start_time} seconds")
+    logger.info(f"Startup Time: {end_time - start_time} seconds")
     code = app.exec_()
     sys.exit(code)
 
