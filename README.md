@@ -1,6 +1,22 @@
 
 TODO:
 
+release
+- [ ] settings: some way to edit+save them all in qsettings (no conf files)
+    - [ ] maybe qsettings read first, then overwritten with $HOME/settings later on. 
+    - we can use QStandardPaths for this
+- [ ] settings: api key
+- [ ] settings: model
+- [ ] settings default model
+- [ ] (optional) model per-prompt, or some other way to change model in ui
+- [ ] UI: show the model being used 
+- [ ] packaging: Make the outputs not overwrite each other. Some way to do github packages + releases here? 
+
+settings ideas:
+- how to make this work for both dev and shipping?
+- maybe a defaults.py that gets loaded on first run, then written out to the standard config
+  location if it doesn't exist? (Otherwise, the config there is loaded + merged in)
+
 quick
 - [ ] Readme description of project
 - [ ] Use flex layout instead of hardcoding pixels
