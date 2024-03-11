@@ -57,9 +57,11 @@ class BaseChatClient:
                 yield chunk
             except:
                 logger.warn(f'Failed to decode: {event.data}')
+        full_message = ''.join(model_message)
+        logger.info(f'Got response: {full_message}')
         self.messages.append({
             "role": "assistant", 
-            "content": ''.join(model_message),
+            "content": full_message,
         })
         
     def print(self, question):
