@@ -8,3 +8,4 @@ PyQt5-sip==12.13.0
 requests==2.31.0
 sseclient-py==1.8.0
 urllib3==2.2.1
+tomlkit==0.12.4
