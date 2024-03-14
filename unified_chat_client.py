@@ -79,3 +79,4 @@ class OpenAIClient(BaseChatClient):
     def __init__(self, model='gpt-3.5-turbo'):
         key = settings.get_api_key('openai')
         super().__init__('https://api.openai.com/v1/chat/completions', model, key)
+
